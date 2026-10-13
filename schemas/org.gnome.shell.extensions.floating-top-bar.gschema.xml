@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schemalist>
+  <schema id="org.gnome.shell.extensions.floating-top-bar" path="/org/gnome/shell/extensions/floating-top-bar/">
+    <key name="top-margin" type="i">
+      <default>10</default>
+      <range min="0" max="64"/>
+      <summary>Gap between the top of the screen and the bar</summary>
+    </key>
+    <key name="side-margin" type="i">
+      <default>48</default>
+      <range min="0" max="400"/>
+      <summary>Gap at each side of the bar</summary>
+    </key>
+    <key name="bottom-margin" type="i">
+      <default>8</default>
+      <range min="0" max="64"/>
+      <summary>Gap between the bar and maximized windows</summary>
+    </key>
+    <key name="corner-radius" type="i">
+      <default>14</default>
+      <range min="0" max="40"/>
+      <summary>Corner radius of the bar</summary>
+    </key>
+    <key name="shadow" type="b">
+      <default>true</default>
+      <summary>Draw a soft shadow under the bar</summary>
+    </key>
+  </schema>
+</schemalist>
