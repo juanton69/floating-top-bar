@@ -108,6 +108,8 @@ function collectNamed(actor, name, found) {
 export default class FloatingTopBarExtension extends Extension {
     enable() {
         this._applyIdle = 0;
+        this._applyTimeout = 0;
+        this._startupId = 0;
         this._panelBoxId = 0;
         this._blurOriginalStyles = new Map();
         this._settings = this.getSettings();
@@ -126,8 +128,19 @@ export default class FloatingTopBarExtension extends Extension {
         this._panelBoxId = Main.layoutManager.panelBox.connect(
             'child-added', () => this._queueApply());
 
-        this._apply();
         this._retireFixedTheme();
+        this._apply();
+
+        // Blur my Shell, Dash to Dock, and User Themes finish the panel after
+        // startup-complete. Re-apply then, plus one short timeout for their idles.
+        if (Main.layoutManager._startingUp) {
+            this._startupId = Main.layoutManager.connect('startup-complete', () => {
+                this._clearStartup();
+                this._onStartupReady();
+            });
+        } else {
+            this._queueApply();
+        }
     }
 
     _lookupCompanions() {
@@ -140,9 +153,14 @@ export default class FloatingTopBarExtension extends Extension {
     }
 
     disable() {
+        this._clearStartup();
         if (this._applyIdle) {
             GLib.source_remove(this._applyIdle);
             this._applyIdle = 0;
+        }
+        if (this._applyTimeout) {
+            GLib.source_remove(this._applyTimeout);
+            this._applyTimeout = 0;
         }
         if (this._panelBoxId) {
             Main.layoutManager.panelBox.disconnect(this._panelBoxId);
@@ -170,6 +188,28 @@ export default class FloatingTopBarExtension extends Extension {
         this._blurSettings = null;
         this._blurPanel = null;
         this._userTheme = null;
+    }
+
+    _clearStartup() {
+        if (!this._startupId)
+            return;
+        Main.layoutManager.disconnect(this._startupId);
+        this._startupId = 0;
+    }
+
+    _onStartupReady() {
+        this._lookupCompanions();
+        this._retireFixedTheme();
+        this._apply();
+        this._queueApply();
+        if (this._applyTimeout)
+            GLib.source_remove(this._applyTimeout);
+        this._applyTimeout = GLib.timeout_add(GLib.PRIORITY_DEFAULT, 250, () => {
+            this._applyTimeout = 0;
+            if (this._settings)
+                this._apply();
+            return GLib.SOURCE_REMOVE;
+        });
     }
 
     _queueApply() {

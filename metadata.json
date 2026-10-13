@@ -3,8 +3,8 @@
   "name": "Floating Top Bar",
   "description": "Floats the top bar with rounded corners and a narrower width. Margins, corner radius, and shadow are in the extension settings.",
   "shell-version": ["51"],
-  "version": 1,
-  "version-name": "1.0",
+  "version": 2,
+  "version-name": "1.1",
   "settings-schema": "org.gnome.shell.extensions.floating-top-bar",
   "url": "https://github.com/juanton69/floating-top-bar"
 }

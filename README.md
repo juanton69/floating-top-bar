@@ -37,6 +37,8 @@ gnome-extensions enable floating-top-bar@juanton.local
 
 Log out and back in once. GNOME Shell 51 loads a new extension directory at login.
 
+The bar style is applied again after GNOME finishes startup, so it survives login when Blur my Shell or User Themes restyle the panel.
+
 ## License
 
 GPL-3.0-or-later. See [LICENSE](LICENSE).
